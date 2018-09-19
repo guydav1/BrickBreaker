@@ -14,7 +14,7 @@ class Paddle {
   }
 
   public void show() {
-    fill(255,120,30);
-    rect(pos.x, pos.y, w, h,7);
+    fill(255, 120, 30);
+    rect(pos.x, pos.y, w, h, 7);
   }
 }

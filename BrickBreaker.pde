@@ -1,19 +1,28 @@
 Ball ball;
 Paddle paddle;
 ArrayList<Brick> bricks;
-boolean isWin = false;
-boolean isLose = false;
-int lives = 3;
+boolean isWin;
+boolean isLose;
+int lives;
+int rows, cols;
+Brick b = new Brick(0, 0, 0, 0);
+
+float playableAreaX;
+float playableAreaY;
+float hitTimer;
 
 void init() {
-  ball = new Ball(width/2, height/2);
+  ball = new Ball(width/2, height/2 -100);
   paddle = new Paddle();
   bricks = new ArrayList<Brick>();
+  print(playableAreaY, rows, cols);
 
-  for (int i = 0; i<6; i++) {
-    bricks.add(new Brick(i*101, 50, 3, color(125, 35, 74)));
+  for (int i = 0; i<rows; i++) {
+    for (int j =0; j<cols; j++) {      
+      bricks.add(new Brick(j*b.w, i*b.h+50, (int)random(1, 4), color(255)));
+    }
   }
-  
+
   isWin = false;
   isLose = false;
   lives = 3;
@@ -21,7 +30,13 @@ void init() {
 
 void setup() {
   size(600, 600);
+  playableAreaX = width;
+  playableAreaY = height/3;
+  rows = floor(playableAreaY/b.h);
+  cols = floor(width/b.w);
+
   init();
+  hitTimer = 0;
   noStroke();
 }
 
@@ -33,31 +48,43 @@ void mousePressed() {
   }
 }
 void draw() {
-  
+
   background(51);
   drawLives(lives);
-  
+  if (lives == -1 && !isLose) {
+    isLose = true; 
+    println("GAME OVER");
+    return;
+  } else if (isWin) {
+    return;
+  }
+
   ball.update();
   ball.paddleCollision(paddle);
   ball.show();
-  
+
   paddle.update();
   paddle.show();
-  
+
   for (int i = bricks.size()-1; i>=0; i--) {
-    bricks.get(i).isHit(ball);   
-    bricks.get(i).show();
-    if (bricks.get(i).isDead) {
+    Brick brick = bricks.get(i);
+    if (ball.brickCollision(brick) && millis() - hitTimer > 50) {
+      hitTimer = millis();
+      brick.level--;
+      if (brick.level == 0) {
+        brick.isDead = true;
+      }
+      ball.vel.y *= -1;
+    }
+
+    brick.show();
+    if (brick.isDead) {
       bricks.remove(i);
     }
   }
   if (bricks.size() == 0 && !isWin) {
     isWin = true;
     println("YOU WIN");
-  }
-  if (lives == 0 && !isLose) {
-    isLose = true; 
-    println("GAME OVER");
   }
 }
 
