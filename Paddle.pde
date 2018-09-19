@@ -1,7 +1,7 @@
 class Paddle {
 
   PVector pos;
-  float w = 70; 
+  float w = 110; 
   float h = 15;
 
   Paddle() {
@@ -10,10 +10,11 @@ class Paddle {
 
 
   public void update() {
-    this.pos.x = mouseX;
+    this.pos.x = mouseX - w/2;
   }
 
   public void show() {
-    rect(pos.x, pos.y, w, h);
+    fill(255,120,30);
+    rect(pos.x, pos.y, w, h,7);
   }
 }

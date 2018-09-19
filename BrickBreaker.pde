@@ -1,41 +1,71 @@
-Ball b;
-Paddle p;
-ArrayList<Obstacle> obstacles;
+Ball ball;
+Paddle paddle;
+ArrayList<Brick> bricks;
+boolean isWin = false;
+boolean isLose = false;
+int lives = 3;
 
+void init() {
+  ball = new Ball(width/2, height/2);
+  paddle = new Paddle();
+  bricks = new ArrayList<Brick>();
 
+  for (int i = 0; i<6; i++) {
+    bricks.add(new Brick(i*101, 50, 3, color(125, 35, 74)));
+  }
+  
+  isWin = false;
+  isLose = false;
+  lives = 3;
+}
 
 void setup() {
   size(600, 600);
-  b = new Ball(width/2, height/2);
-  p = new Paddle();
-  obstacles = new ArrayList<Obstacle>();
-  for (int i = 0; i<6; i++) {
-
-    obstacles.add(new Obstacle(i*100+1, 50, 1, 0));
-  }
+  init();
+  noStroke();
 }
 
 void mousePressed() {
-  b.applyForce(new PVector (0, 4)) ;
+  if (ball.vel.x == 0 && ball.vel.y == 0)
+    ball.vel.set(0, ball.speed);// = (new PVector (mouseX, mouseY)) ;
+  if (isLose) {
+    init();
+  }
 }
 void draw() {
+  
   background(51);
-  stroke(0);
-  noFill();
-  b.update();
-  b.paddleCollision(p);
-  b.show();
-  p.update();
-  p.show();
-  for (int i = obstacles.size()-1; i>=0; i--) {
-    obstacles.get(i).show();
-    obstacles.get(i).isHit(b);
-
-    if (obstacles.get(i).isDead) {
-      obstacles.remove(i);
+  drawLives(lives);
+  
+  ball.update();
+  ball.paddleCollision(paddle);
+  ball.show();
+  
+  paddle.update();
+  paddle.show();
+  
+  for (int i = bricks.size()-1; i>=0; i--) {
+    bricks.get(i).isHit(ball);   
+    bricks.get(i).show();
+    if (bricks.get(i).isDead) {
+      bricks.remove(i);
     }
   }
-  if (obstacles.size() == 0) {
+  if (bricks.size() == 0 && !isWin) {
+    isWin = true;
     println("YOU WIN");
+  }
+  if (lives == 0 && !isLose) {
+    isLose = true; 
+    println("GAME OVER");
+  }
+}
+
+void drawLives(int lives) { 
+  int r = (int)ball.r;
+  color col = ball.col;
+  for (int i=0; i<lives; i++) {
+    fill(col);
+    ellipse( i*(r*2+r)+r, r*2, r*2, r*2);
   }
 }

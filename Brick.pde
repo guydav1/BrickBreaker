@@ -1,12 +1,13 @@
-class Obstacle {
+class Brick {
   
   PVector pos;
   int level;
   color col;
+  private float alpha;
   float w = 100,h = 25;
   boolean isDead = false;
   
-  Obstacle(float x , float y, int lvl, color col) {
+  Brick(float x , float y, int lvl, color col) {
     this.pos = new PVector(x,y);
     this.level = lvl;
     this.col = col;
@@ -14,15 +15,26 @@ class Obstacle {
   
   void show() {
     if(isDead) return;
-     stroke(col);
-     //fill(col);
-     rect(pos.x,pos.y,w,h); 
+    
+    switch (level) {
+     case 3: alpha = 255;
+       break;
+     case 2: alpha = 175;
+       break;
+     case 1: alpha = 95;
+      
+    }
+     //stroke(col);
+     fill(col , alpha);
+     rect(pos.x,pos.y,w,h,10); 
   }
   
   void isHit(Ball b) {
-     if(b.pos.x + b.r > pos.x && b.pos.x -b.r < pos.x+w && b.pos.y + b.r > pos.y && b.pos.y  < pos.y + h && !isDead) {
-      isDead = true; 
-      b.vel.y  *= -1;
+     if(b.pos.x + b.r > pos.x && b.pos.x -b.r < pos.x+w && b.pos.y + b.r > pos.y && b.pos.y - b.r < pos.y + h && !isDead) {  
+       level--;
+       if (level == 0 ) isDead = true;      
+       if (b.pos.y-b.r<pos.y+h && b.vel.y <0) b.vel.y  *= -1;
+       else if (b.pos.y + b.r > pos.y && b.vel.y > 0) b.vel.y  *= -1;
      }
   }
 }

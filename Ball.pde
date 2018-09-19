@@ -2,45 +2,40 @@ class Ball {
 
   PVector pos;
   PVector vel;
-  PVector acc;
+  color col = color(200,30,50);
   PVector jump = new PVector(0, -2);
   float r = 10;
 
   float speed = 7;
 
-  Ball(PVector pos) {
-    this.pos = pos;
-    vel = new PVector(0, 0);
-    acc = new PVector(0, 0);
-  }
-
   Ball(float x, float y) {
     pos = new PVector();
-    pos.x = x;
-    pos.y = y;
-    vel = new PVector(3, speed);
-    acc = new PVector(0, 0);
+    pos.set(x,y);
+    vel = new PVector(0, 0);
+
   }
 
-  void applyForce(PVector force) {
-    acc.add(force);
-  }
+
 
   void update() {
-    vel.add(acc);
+
     pos.add(vel);
-    acc.set(0, 0);
+
 
     if (this.pos.x>width-r || pos.x<r) {
       vel.x *= -1;
-    } else if (pos.y<r || pos.y>height-r) {
+    } else if (pos.y<r ) {
       vel.y *= -1;
+    }
+    else if (pos.y - r > height) {
+      lives--;
+      pos.set(width/2,height/2);
+      vel.set(0,0);
     }
   }
 
   void show() {
-    //fill(255);
-    //noStroke();
+    fill(col);
     ellipse(pos.x, pos.y, r*2, r*2);
   }
 
